@@ -7,7 +7,6 @@
 #include <cstring>
 #include <stdexcept>
 #include "glut.h"
-//#include "glut.h"
 #include "wavefront_obj.h"
 
 namespace {

@@ -45,6 +45,9 @@ double dist[3] = { 0,0,0 };
 double amount[3] = { 0,0,0 };
 bool rotateOn = false;
 
+int spin = 0;
+unsigned char cor;
+
 double rotx = 0;
 double roty = 0;
 double rotz = 0;
@@ -53,6 +56,42 @@ double rotz = 0;
 // (Project 2) Functions
 /*****************************/
 
+void spinDisplay(void)
+{
+    spin = spin + 2.0;
+    if (spin > 360.0)
+        spin = spin - 360.0;
+    glutPostRedisplay();
+}
+
+/*
+void mouse(int button, int state, int x, int y)
+{
+    switch (button) {
+    case GLUT_LEFT_BUTTON:
+        if (state == GLUT_DOWN)
+            glutIdleFunc(spinDisplay);
+        break;
+    case GLUT_RIGHT_BUTTON:
+        if (state == GLUT_DOWN)
+            glutIdleFunc(NULL);
+        break;
+    }
+}
+*/
+void mouse(int button, int state, int x, int y)
+{
+    switch (button) {
+    case GLUT_LEFT_BUTTON:
+        if (state == GLUT_DOWN)
+            glutIdleFunc(spinDisplay);
+        break;
+    case GLUT_RIGHT_BUTTON:
+        if (state == GLUT_DOWN)
+            glutIdleFunc(NULL);
+        break;
+    }
+}
 
 
 /*****************************/
@@ -378,11 +417,21 @@ void onMouseButton( int button, int state, int x, int y ) {
 void onMouseDrag( int x, int y ) {
     y = height - y - 1;
     printf( "in drag (%d, %d)\n", x - oldX,  y - oldY );
-
     // (Project 2) TODO : Implement here to perform properly when drag the mouse on each case, respectively.
     /*********************************************************************************/
+    /*
+    glPushMatrix();						// Push the current matrix of GL into stack.
+    glTranslated(0, -cow->aabb.first[1], -8);	// Set the location of cow.
+    glRotated(-90, 0, 1, 0);			// Set the direction of cow. These information are stored in the matrix of GL.
+    glGetDoublev(GL_MODELVIEW_MATRIX, cow2wld.matrix());	// Read the modelview matrix about location and direction set above, and store it in cow2wld matrix.
+    glPopMatrix();*/
 
-
+    if (cor == 'x') {
+        glPushMatrix();						// Push the current matrix of GL into stack.
+        glTranslated(x-oldX, 0, 0);	// Set the location of cow.
+        glGetDoublev(GL_MODELVIEW_MATRIX, cow2wld.matrix());// Read the modelview matrix about location and direction set above, and store it in cow2wld matrix.
+        glPopMatrix();						// Pop the matrix on stack to GL.
+    }
 
 
 
@@ -418,8 +467,25 @@ void onKeyPress( unsigned char key, int x, int y ) {
 
     // (Project 2) TODO : Implement here to handle keyboard input.
     /*********************************************************************************/
+    /*
+    if (key == 'r') {
+        printf("rotate on\n");
+        mouse(key, state, x, y);
+        printf("rotate off\n");
+    }
+    */
+    if (key == 'x') {
+        onMouseDrag(x, y);
+        cor = key;
+    }
+           
+    if (key == 'y') {
 
+    }
 
+    if (key == 'z') {
+
+    }
 
 
 
