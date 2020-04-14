@@ -45,8 +45,8 @@ double dist[3] = { 0,0,0 };
 double amount[3] = { 0,0,0 };
 bool rotateOn = false;
 
-int spin = 0;
 unsigned char cor;
+float spin = 0;
 
 double rotx = 0;
 double roty = 0;
@@ -55,44 +55,25 @@ double rotz = 0;
 
 // (Project 2) Functions
 /*****************************/
-
-void spinDisplay(void)
+void rotate(void)
 {
-    spin = spin + 2.0;
-    if (spin > 360.0)
-        spin = spin - 360.0;
+    if (spin == 360) {
+        if (rotateOn == true)
+            printf("rotate off\n");
+        rotateOn = false;
+        return;
+    }
+    rotateOn = true;
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glPushMatrix();						// Push the current matrix of GL into stack
+    glLoadIdentity();                   // Set the GL matrix Identity matrix.
+    glMultMatrixd(cow2wld.matrix());
+    glRotatef(1, rotx, roty, rotz);
+    glGetDoublev(GL_MODELVIEW_MATRIX, cow2wld.matrix());// Read the modelview matrix about location and direction set above, and store it in cow2wld matrix.
+    glPopMatrix();
+    spin = spin + 1;
     glutPostRedisplay();
 }
-
-/*
-void mouse(int button, int state, int x, int y)
-{
-    switch (button) {
-    case GLUT_LEFT_BUTTON:
-        if (state == GLUT_DOWN)
-            glutIdleFunc(spinDisplay);
-        break;
-    case GLUT_RIGHT_BUTTON:
-        if (state == GLUT_DOWN)
-            glutIdleFunc(NULL);
-        break;
-    }
-}
-*/
-void mouse(int button, int state, int x, int y)
-{
-    switch (button) {
-    case GLUT_LEFT_BUTTON:
-        if (state == GLUT_DOWN)
-            glutIdleFunc(spinDisplay);
-        break;
-    case GLUT_RIGHT_BUTTON:
-        if (state == GLUT_DOWN)
-            glutIdleFunc(NULL);
-        break;
-    }
-}
-
 
 /*****************************/
 
@@ -419,31 +400,23 @@ void onMouseDrag( int x, int y ) {
     printf( "in drag (%d, %d)\n", x - oldX,  y - oldY );
     // (Project 2) TODO : Implement here to perform properly when drag the mouse on each case, respectively.
     /*********************************************************************************/
-    /*
-    glPushMatrix();						// Push the current matrix of GL into stack.
-    glTranslated(0, -cow->aabb.first[1], -8);	// Set the location of cow.
-    glRotated(-90, 0, 1, 0);			// Set the direction of cow. These information are stored in the matrix of GL.
-    glGetDoublev(GL_MODELVIEW_MATRIX, cow2wld.matrix());	// Read the modelview matrix about location and direction set above, and store it in cow2wld matrix.
-    glPopMatrix();*/
-
-    if (cor == 'x') {
         glPushMatrix();						// Push the current matrix of GL into stack.
-        glTranslated(x-oldX, 0, 0);	// Set the location of cow.
+        glLoadIdentity();                   // Set the GL matrix Identity matrix.
+        glMultMatrixd(cow2wld.matrix());
+        if (cor == 'x') {
+            glTranslated(0.1 * (x - oldX), 0, 0);	// Set the location of cow.
+        }
+        if (cor == 'y') {
+            glTranslated(0, 0.1 * (x - oldX), 0);	// Set the location of cow.
+        }
+        if (cor == 'z') {
+            glTranslated(0, 0, 0.1 * (x - oldX));	// Set the location of cow.
+        }
         glGetDoublev(GL_MODELVIEW_MATRIX, cow2wld.matrix());// Read the modelview matrix about location and direction set above, and store it in cow2wld matrix.
-        glPopMatrix();						// Pop the matrix on stack to GL.
-    }
+        glPopMatrix();						// Pop the matrix on stack to GL.  
 
-
-
-
-
-
-
-
-
-
-
-
+    oldX = x;
+    oldY = y;
     /*********************************************************************************/
 
     glutPostRedisplay();
@@ -467,36 +440,32 @@ void onKeyPress( unsigned char key, int x, int y ) {
 
     // (Project 2) TODO : Implement here to handle keyboard input.
     /*********************************************************************************/
-    /*
+
     if (key == 'r') {
+        spin = 0;
         printf("rotate on\n");
-        mouse(key, state, x, y);
-        printf("rotate off\n");
+        rotx = rand() % 10;
+        roty = rand() % 10; 
+        rotz = rand() % 10;
+        glutIdleFunc(rotate);
+    
     }
-    */
+
+
     if (key == 'x') {
         onMouseDrag(x, y);
         cor = key;
     }
            
     if (key == 'y') {
-
+        onMouseDrag(x, y);
+        cor = key;
     }
 
     if (key == 'z') {
-
+        onMouseDrag(x, y);
+        cor = key;
     }
-
-
-
-
-
-
-
-
-
-
-
 
     /*********************************************************************************/
 
